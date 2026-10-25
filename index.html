@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CarePulse - Smart Care Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+<aside class="side">
+  <div class="brand">
+    <div class="logo">+</div>
+    <div><div class="bname">CarePulse</div><div class="btag">Smart Care Companion</div></div>
+  </div>
+  <nav>
+    <button class="nav active" data-nav="daily"><span>&#127807;</span>Daily Schedule</button>
+    <button class="nav" data-nav="meds"><span>&#128138;</span><i style="font-style:normal">My Medicines <b id="medCount"></b></i></button>
+    <button class="nav" data-nav="safety"><span>&#128737;&#65039;</span><i style="font-style:normal">Safety &amp; Climate <b id="navCount"></b></i></button>
+    <button class="nav" data-nav="triage"><span>&#128203;</span>Doctor Triage Card</button>
+  </nav>
+  <div class="grow"></div>
+  <div class="climate">
+    <div style="font-size:22px">&#127777;&#65039;</div>
+    <div class="ct">Climate Storage Watch</div>
+    <div id="climateTxt"></div>
+  </div>
+  <div class="foot">Offline-First &bull; 100% Private<br><a id="resetDemo">Reset demo data</a></div>
+</aside>
+
+<main>
+  <div class="top">
+    <div>
+      <div class="eyebrow">VCET PROJECT EXPO 2026</div>
+      <h1 id="pageTitle">Your Daily Wellness</h1>
+    </div>
+    <div class="topr">
+      <button class="tempchip" id="tempChip" title="Click to change the outdoor temperature">&#127777;&#65039; <span id="tempVal">34&deg;C</span> <span class="mini" id="tempState">Cool Down</span></button>
+      <div class="avatar">SK</div>
+    </div>
+  </div>
+
+  <div id="notifBanner"></div>
+
+  <!-- ================= DAILY ================= -->
+  <section data-view="daily">
+    <div class="hero">
+      <div>
+        <div class="eb">SMART ADHERENCE &amp; SAFETY</div>
+        <h2>Stay on track, stay protected.</h2>
+        <p>CarePulse checks for risky drug combinations, protects heat-sensitive medicines in warm weather, warns you before stock runs out, and reminds you with voice and notifications.</p>
+        <div class="hbtns">
+          <button class="hb pri" id="addBtn">+ Add Medication</button>
+          <button class="hb" id="allBtn">&#128138; View All Medicines</button>
+          <button class="hb" id="clashBtn">&#9889; Simulate Drug Clash (Demo)</button>
+          <button class="hb" id="reportBtn">&#129658; View 10-Sec Doctor Report</button>
+          <button class="hb" id="remBtn">&#128276; Enable Reminders</button>
+          <button class="hb" id="testBtn">&#9200; Test Reminder</button>
+        </div>
+      </div>
+      <div class="art">&#128138;<i>&#128154;</i></div>
+    </div>
+
+    <div id="alertBox"></div>
+    <div class="snap" id="snap" hidden></div>
+
+    <div class="stats">
+      <div class="stat"><div class="sico" style="background:#dff0e3">&#10003;</div><div class="sl">Completed Doses</div><div class="sv" id="stDone">0 / 0</div><div class="ss">Keep going steadily</div></div>
+      <div class="stat"><div class="sico" style="background:#e8e0f6">&#128202;</div><div class="sl">Adherence Score</div><div class="sv" id="stAdh">0%</div><div class="ss" id="stAdhSub">Keep going steadily</div></div>
+      <div class="stat"><div class="sico" style="background:#fbe6dc">&#128737;&#65039;</div><div class="sl">Safety &amp; Storage Checks</div><div class="sv" id="stSafe">Clear</div><div class="ss" id="stSafeSub"></div></div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <div class="ch">
+            <div><div class="eb">TODAY'S TIMELINE</div><h3>Medication Schedule</h3></div>
+            <div class="count" id="presCount">0 Prescriptions</div>
+          </div>
+          <div id="timeline"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="ch">
+            <div><div class="eb">VOICE ASSISTANT</div><h3>Talk to CarePulse</h3></div>
+            <button class="vtog" id="voiceToggle">&#128266; Voice: ON</button>
+          </div>
+          <div class="vrow">
+            <button class="mic" id="micBtn">&#127908; Tap and speak</button>
+            <input class="in" id="cmd" placeholder="...or type a command">
+          </div>
+          <div class="reply" id="reply">Try saying: "I took my morning tablet".</div>
+          <div class="chips" id="chips"></div>
+        </div>
+        <div class="card">
+          <div class="ch"><div><div class="eb">AI INSIGHTS</div><h3>Adherence Prediction</h3></div></div>
+          <div id="insights"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MY MEDICINES ================= -->
+  <section data-view="meds" hidden>
+    <div class="card">
+      <div class="ch">
+        <div><div class="eb">ALL PRESCRIPTIONS</div><h3 id="medsCount">0 medicines</h3></div>
+        <button class="hb pri" id="addBtn2">+ Add Medicine</button>
+      </div>
+      <div class="mtool">
+        <label class="selall"><input type="checkbox" class="chk" id="selAll"> Select all</label>
+        <div class="grow"></div>
+        <button class="btnx" id="delSel" disabled>Delete selected (0)</button>
+      </div>
+      <div id="medsList"></div>
+    </div>
+  </section>
+
+  <!-- ================= ADD MEDICINE ================= -->
+  <section data-view="add" hidden>
+    <div class="addwrap">
+      <div class="addhead">
+        <button class="back" id="backBtn" type="button" title="Back">&larr;</button>
+        <h2>Add Medicine</h2>
+        <p>Add schedule for medications</p>
+      </div>
+      <form class="addcard" id="addForm" autocomplete="off">
+        <label class="fl" for="fName">Pill's Name</label>
+        <input class="ul big" id="fName" required placeholder="e.g., Chlorphenamine">
+
+        <label class="fl">Medicine Form</label>
+        <div class="fchips" id="formChips"></div>
+
+        <div class="two2">
+          <div>
+            <label class="fl" id="qtyLabel" for="fQty">Pills Quantity</label>
+            <div class="qty"><input class="ul" id="fQty" type="number" min="1" step="1" value="1"><span id="fQtyUnit" class="qunit">pill</span></div>
+          </div>
+          <div>
+            <label class="fl" for="fDose">Dose</label>
+            <select class="ul" id="fDose"></select>
+            <input class="ul" id="fDoseOther" placeholder="Type dose, e.g. 400 mg" hidden>
+          </div>
+        </div>
+
+        <label class="fl" for="fFreq">Set Frequency</label>
+        <select class="ul" id="fFreq"></select>
+        <div class="dchips" id="dayChips" hidden></div>
+
+        <label class="fl">Schedule Time</label>
+        <div id="timeList"></div>
+
+        <div class="two2">
+          <div><label class="fl" id="stockLabel" for="fStock">Total in stock</label><input class="ul" id="fStock" type="number" min="0" value="30"></div>
+          <div><label class="fl" for="fInstr">Instructions (optional)</label><input class="ul" id="fInstr" placeholder="e.g., after meal"></div>
+        </div>
+        <button class="bigsave" type="submit">Save Medicine</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================= SAFETY ================= -->
+  <section data-view="safety" hidden>
+    <div id="safetyList"></div>
+    <div class="card"><div class="ch"><div><div class="eb">STORAGE</div><h3>Heat-sensitive medicines</h3></div></div><div id="heatList"></div></div>
+    <div class="card"><div class="ch"><div><div class="eb">STOCK</div><h3>Refill status</h3></div></div><div id="stockList"></div></div>
+  </section>
+
+  <!-- ================= TRIAGE ================= -->
+  <section data-view="triage" hidden>
+    <div class="snap" id="snap2" style="border-style:solid"></div>
+    <button class="hb pri noprint" onclick="window.print()">&#128424;&#65039; Print / Save as PDF</button>
+  </section>
+
+  <div class="disc">CarePulse is a reminder and tracking tool, not medical advice. The drug-interaction list is a small built-in demo table, not a complete clinical database. Always follow your doctor's prescription and ask your pharmacist about combinations. Voice recognition works in Google Chrome or Microsoft Edge and needs internet. Notifications work while CarePulse stays open in a browser tab. Your data stays in your own browser.</div>
+</main>
+</div>
+<button class="fab" id="fabBtn" title="Add medicine">+</button>
+<div class="toast" id="toast"></div>
+<script src="script.js"></script>
+</body>
+</html>
